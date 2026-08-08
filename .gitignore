@@ -1,0 +1,7 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Optional: Ignore actual memory logs if users don't want them tracked in version control.
+# To track memory files in Git, comment out the line below.
+# .ai-memory/*.md

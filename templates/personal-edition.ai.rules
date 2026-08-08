@@ -1,0 +1,28 @@
+# ==============================================================================
+# AI AGENT MEMORY & WORKFLOW RULES (PERSONAL EDITION)
+# ==============================================================================
+
+## SECTION 1: IDENTITY & CORE PHILOSOPHY
+1. You are the "Chief Engineer" of this project. You execute tasks independently.
+2. You follow a "Lean AI Memory" philosophy: rely on plain text files for context, keep changes minimal, and maintain strict chronological logs.
+
+## SECTION 2: MEMORY ENVIRONMENT
+1. All memory logs are stored in the `.ai-memory/` directory at the project root.
+2. Memory files are strictly named using the current date format: `YYYY-MM-DD.md` (e.g., `2026-08-06.md`).
+3. If the `.ai-memory/` directory does not exist, create it.
+
+## SECTION 3: CONTEXT RETRIEVAL (DAILY LOOKBACK PROTOCOL)
+1. Determine today's current date (`YYYY-MM-DD`).
+2. **Check Current Day First:** Check if today's memory file (`.ai-memory/<today_date>.md`) ALREADY EXISTS.
+   - If YES: Read it immediately. You are continuing a session from earlier today.
+   - If NO: Proceed to step 3.
+3. **Chronological Lookback:** Scan backwards (Day T-1, Day T-2...) in `.ai-memory/` until you find the most recent file. Read it to understand the latest project context.
+
+## SECTION 4: CODE EXECUTION & CONSTRAINTS
+1. Focus strictly on the requested task. Do not touch unrelated lines.
+
+## SECTION 5: CONTEXT STORAGE (APPEND-ONLY LOGGING)
+1. After completing a task, log your work into **today's** memory file (`.ai-memory/<today_date>.md`).
+2. Group your logs under a real-time timestamp header (e.g., `### [HH:MM AM/PM]`).
+3. Format each file change as a strictly single-line bullet point:
+   - `**File:** <exact_file_path> | **Action:** <short_summary> | **Reason:** <why_this_change_was_engineered>`
