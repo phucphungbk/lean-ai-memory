@@ -70,6 +70,7 @@ Lean AI Memory does not try to build another complicated memory engine.
 
 Instead, it gives AI agents a simple shared memory space inside the project.
 
+ ```text
     AI Agent
        |
 -------▼-------
@@ -88,6 +89,7 @@ Instead, it gives AI agents a simple shared memory space inside the project.
        |
        ▼
       Git
+```
 
 The AI reads the rules.
 The AI reads the relevant memory.
