@@ -1,338 +1,522 @@
 # 🧠 Lean AI Memory
 
-> **Your AI memory should be a Git diff, not a database.**
+> **"Human-readable memory for AI agents. Markdown + Git + user-defined rules."**
 
-A tiny, zero-cost memory protocol for AI coding agents.
+Lean AI Memory is a tiny, Git-native protocol for giving AI agents persistent memory using **Markdown and natural-language rules**.
 
-**Markdown + Git. That's it.**
-
-No vector database.
+No database.
+No vector store.
 No embeddings.
-No cloud API.
-No extra service.
+No cloud service.
 No complicated infrastructure.
 
-Lean AI Memory gives your AI coding agent a simple way to **remember what happened in your project and continue where it left off.**
+Just:
+
+**Markdown + Git + Rules.**
+
+The goal is simple:
+
+> Let AI remember what matters, while keeping that memory understandable and controllable by humans.
 
 ---
 
 ## Why?
 
-AI coding agents are powerful, but long-running projects have a simple problem:
+AI agents are becoming very good at working on long-running projects.
 
-**The AI forgets.**
+But there is still a simple problem:
+
+**"The AI forgets."**
 
 You may spend hours discussing:
 
-* Why a design decision was made
-* Which database was chosen
-* What has already been implemented
-* What is still unfinished
-* Which bug was investigated
-* What should happen next
+- why an architectural decision was made
+- which technology was chosen
+- what has already been implemented
+- what is still unfinished
+- which problem was investigated
+- what assumptions were made
+- what should happen next
 
-Then you start a new session.
+Then the session ends.
 
-And the context is gone.
+Tomorrow, a new AI session starts.
 
-Lean AI Memory stores the important context as ordinary Markdown files inside your Git repository.
+And you have to explain everything again.
 
-So your project history becomes part of the project itself.
+There are many possible ways to solve AI memory:
+
+- databases
+- vector databases
+- embeddings
+- RAG
+- memory services
+- cloud APIs
+- knowledge graphs
+
+Those approaches can be useful.
+
+But Lean AI Memory starts with a different question:
+
+> **"What if AI memory was something both AI and humans could simply read, edit, review and version?"**
+
+That is why Lean AI Memory uses Markdown.
 
 ---
 
-## 💡 The Idea
+# 💡 The Core Idea
 
-Instead of building another memory service:
+Lean AI Memory does not try to build another complicated memory engine.
 
-```text
-AI Agent
-   │
-   ├── Read project rules
-   │
-   ├── Read recent memory
-   │
-   ├── Work on the project
-   │
-   └── Write important decisions
-          │
-          ▼
-      Markdown
-          │
-          ▼
-         Git
-```
+Instead, it gives AI agents a simple shared memory space inside the project.
 
-Your memory is:
+    AI Agent
+       |
+-------▼-------
+|  .ai.rules  |
+|             |
+| How AI should |
+| use memory  |
+---------------
+       |
+-------▼-------
+| .ai-memory/ |
+|             |
+| Human-readable|
+| Markdown memory|
+---------------
+       |
+       ▼
+      Git
 
-* Human-readable
-* Version-controlled
-* Diffable
-* Searchable
-* Portable
-* Easy to delete
-* Easy to restore
+The AI reads the rules.
+The AI reads the relevant memory.
+The AI does its work.
+The AI records important context.
+The next session can continue from that context.
+And a human can open the same files at any time.
 
+## 🧠 The Philosophy
+
+Lean AI Memory is intentionally small.
+The important idea is not the storage format.
+The important idea is **shared understanding**.
+AI can read Markdown.
+Humans can read Markdown.
+Humans can edit Markdown.
+Git can version Markdown.
+That creates a very simple relationship:
+
+1  AI ⇆ Human-readable memory ⇆ Git
+
+No special memory viewer is required.
+No proprietary memory format is required.
+No separate memory server is required.
+The memory belongs to the project.
 And most importantly:
 
-**You own it.**
+**You can see what the AI remembers.**
 
----
+## 📜 Rules Are Part of the Memory Model
 
-## ✨ What Makes It Lean?
+Memory is only half of the problem.
+The other half is:
 
-| Traditional AI Memory | Lean AI Memory   |
-| --------------------- | ---------------- |
-| Database              | Markdown         |
-| Vector store          | Git              |
-| Embeddings            | Plain text       |
-| Cloud service         | Local repository |
-| API cost              | $0               |
-| Extra infrastructure  | None             |
-| Hard to inspect       | `git diff`       |
-| Hard to restore       | `git checkout`   |
+**What should the AI remember, and when should it remember it?**
 
-This project intentionally chooses **simplicity over infrastructure**.
+Lean AI Memory intentionally does not try to answer this question for everyone.
+Instead, the behavior is defined by natural-language rules.
+Example:
 
----
+# AI Memory Rules
+Before starting work:
+- Read the latest relevant memory. - Check unfinished work. - Check important architecture decisions.
+When making an important decision:
+- Record the decision. - Record why it was made. - Record important alternatives that were rejected.
+When finishing a work session:
+- Record completed work. - Record unresolved problems. - Record what should happen next.
+Keep memory concise.
+Do not store the entire conversation.
 
-# 🚀 Quick Start
+These rules are not hard-coded into a memory database.
+**You can change them.**
 
-## 1. Create the memory directory
+## 🌱 The Rules Are Intentionally Open
 
-In your project:
+Different people need different kinds of memory.
+A software developer may want:
 
-```text
-your-project/
-├── .ai-memory/
-├── src/
-├── tests/
-└── ...
-```
+Architecture decisions | API changes | Known bugs | Unfinished work | Testing decisions
 
-## 2. Copy a template
+A documentation project may want:
 
-Choose one of the templates:
+Terminology | Writing conventions | Audience | Document decisions | Pending sections
 
-```text
-templates/
-├── personal-edition.ai.rules
-└── team-edition.ai.rules
-```
+A research project may want:
 
-Copy the template you want to your project root:
+Hypotheses | Evidence | Sources | Rejected assumptions | Open questions
 
-```text
+A team may want:
+
+Shared decisions | Project conventions | Responsibilities | Pending work
+
+A personal AI may want something completely different.
+Lean AI Memory does not try to define all of these rules.
+Instead:
+
+**The memory format is simple. The rules are yours.**
+
+This is intentional.
+
+## ✨ Why Markdown?
+
+Because the simplest format is often the easiest one to understand.
+Memory files are ordinary Markdown:
+
+.ai-memory/ ├── 2026-08-14.md ├── 2026-08-15.md └── 2026-08-16.md
+
+You can:
+
+- open them in any editor
+- read them without a special tool
+- edit them manually
+- search them
+- review changes
+- copy them
+- delete them
+- restore them
+- version them with Git
+
+There is no hidden memory database.
+There is no opaque embedding layer.
+There is no special viewer required to understand what happened.
+
+## ♾️ Why Git?
+
+Software projects already have a memory system:
+**Git.**
+
+Git already provides:
+
+- history
+- diff
+- branches
+- merge
+- rollback
+- collaboration
+- local storage
+- remote backup
+
+So why build another system just to version AI memory?
+With Markdown files:
+
+git diff
+
+can show exactly what changed in the AI's memory.
+You can see:
+
++ Decided to use PostgreSQL for the new service. 
++ Rejected MongoDB because transactional consistency is required.
+
+The memory becomes part of the project history.
+
+## 🚀 Quick Start
+
+**1. Add `.ai-memory`**
+
+Create a memory directory in your project:
+
+your-project/ ├── .ai-memory/ ├── src/ ├── tests/ └── ...
+
+**2. Add `.ai.rules`**
+
+Choose a template from:
+
+templates/ ├── personal-edition.ai.rules └── team-edition.ai.rules
+
+Copy the appropriate template to your project root:
+
 .ai.rules
-```
 
-## 3. Tell your AI agent to follow `.ai.rules`
+**3. Tell your AI agent to follow the rules**
 
-The rules tell the agent:
+Your AI agent should:
 
-1. Read recent memory before starting work.
-2. Use the existing project context.
-3. Record important decisions.
-4. Record unfinished work.
-5. Keep memory concise.
-6. Continue from the previous context when possible.
+1. Read `.ai.rules`.
+2. Read relevant recent memory.
+3. Use the existing project context.
+4. Record important decisions.
+5. Record unfinished work.
+6. Keep memory concise.
+7. Continue from previous context when possible.
 
 That's it.
+There is no server to start.
+There is no database to configure.
+There is no API key.
 
----
-
-# 👤 Personal Edition
+## 👤 Personal Edition
 
 For a solo developer, memory can be organized by date:
 
-```text
-.ai-memory/
-├── 2026-08-10.md
-├── 2026-08-11.md
-└── 2026-08-12.md
-```
-
-A new session can look at the most recent memory and continue from there.
+.ai-memory/ ├── 2026-08-14.md ├── 2026-08-15.md └── 2026-08-16.md
 
 Example:
 
-```markdown
-# 2026-08-12
-
+# 2026-08-14
 ## Completed
-- Added PDF signature verification.
-- Exported verification results to Excel.
-
+- Added PDF signature verification. - Added Excel export.
 ## Decisions
-- SQLite is used for local license storage.
-- PDF processing remains completely local.
-
+- PDF processing remains local. - SQLite is used for local configuration.
+## Problems
+- Batch verification is still slow.
 ## Next
-- Add batch verification.
-- Improve error reporting.
-```
+- Investigate batch verification. - Improve error reporting.
 
-Tomorrow, the AI can start from this context instead of starting from zero.
+The next AI session can read this memory and continue from where the previous session stopped.
 
----
+## 👥 Team Edition
 
-# 👥 Team Edition
+Teams can also keep shared or individual memory.
+For example:
 
-For teams, each developer can maintain their own memory:
+.ai-memory/ ├── shared.md ├── history-alice.md ├── history-bob.md └── history-charlie.md
 
-```text
-.ai-memory/
-├── history_alice.md
-├── history_bob.md
-└── history_charlie.md
-```
+Because everything is plain text, the team can review memory using normal Git tools.
 
-This keeps personal working context separate while remaining inside the same Git repository.
-
-Because the files are plain text, developers can review changes with normal Git tools.
-
-```bash
 git diff
-```
 
-No special memory database is required.
+No special memory infrastructure is required.
 
----
+## 🔄 A Typical AI Session
 
-# 🔍 Why Markdown + Git?
+**Day 1**
+You and your AI agent work on a feature.
+During the session:
 
-Because software projects already have a memory system:
+Decision: Use PostgreSQL instead of MongoDB.
+Reason: The feature requires transactional consistency.
 
-**Git.**
+The AI records the important context.
 
-Git already gives us:
+.ai-memory/2026-08-14.md
 
-* History
-* Diff
-* Branches
-* Merge
-* Rollback
-* Collaboration
-* Local storage
-* Remote backup
+**Day 2**
+A new AI session starts.
+Instead of asking:
 
-Why build another system when the project already has one?
+> "Why did we choose PostgreSQL?"
 
-Lean AI Memory simply gives the AI a structured way to use it.
+the AI reads the project memory.
+It already knows:
 
----
+PostgreSQL was selected because transactional consistency is required.
 
-# 🎯 Design Principles
+The work can continue.
 
-### 1. Local-first
+## 🎯 What Lean AI Memory Tries to Solve
 
-Your memory lives with your project.
+Lean AI Memory is useful when you want an AI agent to remember:
 
-### 2. Human-readable
+*   architectural decisions
+*   project conventions
+*   previous investigations
+*   unfinished work
+*   important discoveries
+*   assumptions
+*   decisions and their reasons
+*   what should happen next
 
-Open the file.
+It is especially useful for projects that span many AI sessions.
 
-Read it.
+## 🧩 What Makes It Different?
 
-Edit it.
+Lean AI Memory deliberately chooses:
 
-No special viewer required.
+| Instead of | Use |
+| :--- | :--- |
+| Memory database | Markdown |
+| Vector store | Plain text |
+| Embeddings | Natural-language memory |
+| Cloud memory service | Local repository |
+| Hidden state | Files humans can inspect |
+| Proprietary history | Git history |
+| Fixed memory behavior | User-defined rules |
 
-### 3. Git-native
+This is not because databases or vector search are bad.
+They are useful for different problems.
+Lean AI Memory simply asks:
 
-Memory changes are ordinary Git changes.
+> **Do we really need them for basic project memory?**
 
-### 4. Zero infrastructure
+Sometimes the answer may be no.
 
-No database server.
+## 🔒 Local First
 
-No vector database.
+Lean AI Memory does not require a cloud service.
+Your memory can stay inside your project repository.
+This means:
 
-No API key.
+*   no memory API
+*   no external memory service
+*   no vendor lock-in
+*   no additional infrastructure
 
-No cloud dependency.
+You decide where the repository is stored.
 
-### 5. Keep memory small
+## 🧹 Keep Memory Small
 
-Memory is not a transcript of every conversation.
+Lean AI Memory is not intended to store every conversation.
+Do not turn memory into a transcript.
+Instead, store information that is useful for future work.
+Good memory:
 
-Only keep information that helps the next session.
+Decision: Use iText for PDF processing.
+Reason: The project already depends on it and replacing it would create unnecessary compatibility issues.
 
-### 6. AI-agnostic
+Bad memory:
 
-The protocol is based on plain Markdown and natural-language rules.
+User: Can you implement this?
+AI: Sure, I will start...
+User: What about...
+AI: Let me think...
 
-It can be adapted to different AI coding assistants.
+The goal is not to remember everything.
+The goal is to remember **what matters**.
 
----
+## 🤖 AI-Agnostic
 
-# 🧪 What Lean AI Memory Is NOT
+Lean AI Memory is not tied to a specific AI provider.
+The protocol is based on:
+
+*   Markdown
+*   Git
+*   natural-language rules
+
+It can therefore be adapted to different AI coding assistants and agent workflows.
+The project does not need to know which model you use.
+
+## 🌿 What Lean AI Memory Is NOT
 
 This project is intentionally small.
+It is not trying to be:
 
-It is **not** trying to be:
+*   a vector database
+*   a semantic search engine
+*   a knowledge graph
+*   an enterprise memory platform
+*   a replacement for every AI memory system
+*   a universal memory solution for every industry
 
-* A vector database
-* A semantic search engine
-* A knowledge graph
-* An enterprise memory platform
-* A replacement for every AI memory system
-
-If you need sophisticated retrieval across millions of memories, this is probably not the right tool.
-
+If you need sophisticated semantic retrieval across millions of memories, this is probably not the right tool.
 If you want:
 
-> **"I want my coding AI to remember this project without adding another service."**
+> **"I want my AI to remember this project without adding another service."**
 
-That's exactly what this project is for.
+That's what Lean AI Memory is for.
 
----
+## 🌍 Beyond Coding
 
-# 📁 Repository Structure
+Although the initial use case is AI coding agents, the idea is intentionally broader.
+The same model can potentially be used for:
 
-```text
-lean-ai-memory/
-│
-├── .ai-memory/
-│
-├── templates/
-│   ├── personal-edition.ai.rules
-│   └── team-edition.ai.rules
-│
-├── .gitignore
-├── LICENSE
-└── README.md
-```
+Coding | Documentation | Research | Business workflows | Personal AI | Team knowledge | Project management
 
----
+The important part is not the industry.
+The important part is that:
 
-# 🤝 Contributing
+Human ⇆ Readable memory ⇆ AI
 
-The core of Lean AI Memory is intentionally simple.
+can share the same context.
+The rules can evolve with the project.
 
+## 📐 Design Principles
+
+**1. Human-readable**
+If a human cannot understand the memory, the memory is too opaque.
+
+**2. AI-readable**
+The format should be simple enough for AI agents to consume directly.
+
+**3. Local-first**
+Memory should live close to the project whenever possible.
+
+**4. Git-native**
+Memory should benefit from the same history, diff, branching and collaboration mechanisms as the project.
+
+**5. Rule-driven**
+The user defines how memory should be created and maintained.
+
+**6. Keep it small**
+Memory should contain useful context, not entire conversations.
+
+**7. AI-agnostic**
+Do not lock the memory format to one model or vendor.
+
+**8. Human control**
+The user should be able to inspect, edit, remove or restore AI memory at any time.
+
+## 📁 Repository Structure
+
+lean-ai-memory/├── .ai-memory/├── templates/│   ├── personal-edition.ai.rules│   └─ team-edition.ai.rules
+
+The project is intentionally small.
+That's part of the design.
+
+## 🤝 Contributing
+
+The core protocol is intentionally simple.
 Contributions are welcome, especially:
 
-* Better memory rules
-* Better examples
-* Compatibility improvements
-* New usage patterns
-* Real-world feedback
+*   new rule examples
+*   better templates
+*   real-world usage patterns
+*   compatibility improvements
+*   documentation
+*   ideas for different workflows
+*   feedback from using Lean AI Memory in real projects
 
-If you use Lean AI Memory in a real project, I'd love to hear what worked and what didn't.
+One thing is especially welcome:
 
----
+> **Show us how you define your own memory rules.**
 
-# ⭐ Philosophy
+We do not want to define every possible rule ourselves.
+The interesting part of this project is discovering what people actually need.
 
-> **Keep the intelligence in the AI.
-> Keep the memory in Git.**
+## 🗺️ Roadmap
 
-The goal isn't to build a bigger memory system.
+The project intentionally avoids a feature-heavy roadmap.
+Possible future directions may include:
 
-The goal is to make AI coding agents **remember enough to be useful, without adding unnecessary infrastructure.**
+*   more rule templates
+*   examples for different AI agents
+*   team workflows
+*   better memory conventions
+*   tooling around memory validation
+*   optional integrations
 
----
+Any future feature should preserve the core principles:
+**Simple.**
+**Human-readable.**
+**Git-native.**
+**AI-agnostic.**
 
-## License
+## Philosophy
 
-MIT
+> **Maybe AI memory doesn't need to be smarter.**
+> **Maybe it just needs to be understandable.**
+
+Lean AI Memory is not an attempt to build the world's most powerful memory engine.
+It is an experiment around a simple idea:
+
+> **AI and humans should be able to share a memory that both can understand.**
+
+The storage format is deliberately boring.
+The rules are deliberately open.
+The infrastructure is deliberately minimal.
+Because perhaps the interesting part is not building a bigger memory system.
+Perhaps the interesting part is deciding:
+
+> **What should AI remember?**
+
+And that is something we may not want one tool to decide for everyone.
