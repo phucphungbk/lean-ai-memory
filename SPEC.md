@@ -2,9 +2,9 @@
 
 **Version:** 0.1
 
-Lean AI Memory is a minimal, human-auditable protocol for maintaining durable project memory for AI agents.
+Lean AI Memory is a minimal, human-auditable protocol for maintaining durable project memory across AI sessions.
 
-It uses human-readable files, natural-language rules, and Git history instead of requiring a dedicated memory database or vector store.
+It uses human-readable files, project-defined rules, and version control to preserve useful knowledge without requiring a dedicated memory database or vector store.
 
 ---
 
@@ -14,12 +14,13 @@ Lean AI Memory is designed to provide:
 
 * Persistent memory across AI sessions
 * Human-readable and editable memory
+* Project-local context
 * Git-based history and provenance
 * Minimal infrastructure
-* Project-local memory
+* Flexible memory organization
 * Compatibility with different AI agents and LLMs
 
-Lean AI Memory does **not** attempt to define a universal memory database, retrieval engine, or vector-search system.
+Lean AI Memory defines **principles and behavior**, not a mandatory filesystem schema.
 
 ---
 
@@ -27,47 +28,33 @@ Lean AI Memory does **not** attempt to define a universal memory database, retri
 
 ### 2.1 Human-readable
 
-Memory SHOULD be stored in plain-text formats, preferably Markdown.
+Memory SHOULD be stored in human-readable formats, preferably plain text or Markdown.
 
-A human should be able to open the repository and understand the stored memory without requiring a specialized application.
+A human should be able to inspect, edit, review, and remove memory without requiring a specialized memory service.
 
 ### 2.2 Project-local
 
-Memory SHOULD belong to the project that produced it.
+Memory SHOULD belong to the project or workspace that produced it.
 
-The repository itself provides the natural boundary for project memory.
+The project repository SHOULD provide the natural boundary for project memory.
 
 ### 2.3 Durable knowledge over conversation history
 
-Agents SHOULD NOT store entire conversations as memory.
+Agents SHOULD store information that is expected to remain useful beyond the current session.
 
-Instead, they SHOULD extract information that is expected to remain useful across future sessions.
+Agents SHOULD NOT treat the entire conversation as memory.
 
-Examples include:
+Examples of durable knowledge include:
 
-* Architectural decisions
-* Important constraints
-* Investigations and their conclusions
-* Known problems
+* Important decisions
+* Project constraints
+* Discovered behavior
+* Root causes
+* Known issues
 * Rejected approaches
 * Project-specific conventions
 
-### 2.4 Git as history and provenance
-
-Memory changes SHOULD be versioned together with the project whenever possible.
-
-Git provides:
-
-* History
-* Diff
-* Review
-* Rollback
-* Attribution
-* Provenance
-
-A memory update SHOULD therefore be understandable as a normal project change.
-
-### 2.5 Human control
+### 2.4 Human control
 
 Humans SHOULD be able to:
 
@@ -77,237 +64,269 @@ Humans SHOULD be able to:
 * Review memory changes
 * Revert incorrect memory
 
-An AI agent MUST NOT be treated as the sole authority over the project's long-term memory.
+AI agents SHOULD NOT be treated as the sole authority over long-term project memory.
+
+### 2.5 Versioned history
+
+Memory changes SHOULD be reviewable through version control when the project uses version control.
+
+Git is the preferred mechanism when the project is hosted in Git.
+
+Version control provides:
+
+* History
+* Diff
+* Rollback
+* Review
+* Provenance
 
 ---
 
-## 3. Memory Rules
+## 3. Rules
 
-A project MAY provide an `.ai.rules` file containing natural-language instructions for memory behavior.
+A Lean AI Memory implementation SHOULD define rules that tell an AI agent how memory is handled.
 
 Rules MAY define:
 
+* Where memory is stored
+* How relevant memory is discovered
 * What information should be remembered
 * What information should not be remembered
-* Which files should be read
 * When memory should be updated
 * How memory should be organized
 * How obsolete information should be handled
+* How multiple developers or agents share memory
 
-Example:
+Rules SHOULD be expressed in a form that the target AI agent can understand.
 
-```text
-Before starting work, read relevant project memory.
-
-Only record information that is likely to remain useful
-across future sessions.
-
-Do not store raw conversations.
-
-When a previous decision is changed, update the memory
-and preserve the reason for the change.
-
-Keep memory concise and project-specific.
-```
-
-The protocol does not require a specific rule language.
+Natural-language rules are recommended because they remain human-readable and can be adapted to different agents.
 
 ---
 
-## 4. Memory Lifecycle
+## 4. Memory Retrieval
 
-A compliant implementation SHOULD follow this general lifecycle:
+Before performing work, an agent SHOULD retrieve memory relevant to the current task.
+
+The retrieval strategy is implementation-defined.
+
+An implementation MAY use:
+
+* A current memory file
+* Chronological lookback
+* Developer-specific history
+* Project-wide memory
+* Keyword search
+* File search
+* Semantic search
+* Vector search
+* Agent-native retrieval
+
+Lean AI Memory does not require a specific retrieval algorithm.
+
+The important requirement is that relevant durable project knowledge can be restored across sessions.
+
+---
+
+## 5. Memory Storage
+
+Memory MUST remain accessible as durable project knowledge.
+
+The protocol does **not** require a fixed directory structure or naming convention.
+
+For example, an implementation MAY use chronological files:
 
 ```text
-Read
-  ↓
-Work
-  ↓
-Discover
-  ↓
-Decide
-  ↓
-Record
-  ↓
-Review
-  ↓
-Commit
+.ai-memory/
+├── 2026-08-20.md
+├── 2026-08-21.md
+└── 2026-08-22.md
 ```
 
-### 4.1 Read
+Another implementation MAY use developer-specific histories:
 
-Before starting a task, the agent SHOULD inspect relevant existing memory.
+```text
+.ai-memory/
+├── history_alice.md
+├── history_bob.md
+└── history_charlie.md
+```
 
-The agent SHOULD avoid loading unrelated memory when it is not needed.
+Another implementation MAY organize memory by knowledge type:
 
-### 4.2 Work
+```text
+.ai-memory/
+├── decisions.md
+├── architecture.md
+└── known-issues.md
+```
 
-The agent performs the requested task using the available project context and relevant memory.
+All of these can be valid Lean AI Memory implementations.
 
-### 4.3 Discover
+The protocol defines **behavior**, not a mandatory memory schema.
 
-During the task, the agent may discover information that could remain useful beyond the current session.
+---
 
-### 4.4 Decide
+## 6. Memory Lifecycle
 
-The agent determines whether the information is durable enough to become memory.
+A typical Lean AI Memory workflow is:
+
+```text
+Retrieve
+   ↓
+Work
+   ↓
+Discover
+   ↓
+Evaluate
+   ↓
+Record
+   ↓
+Review
+   ↓
+Version
+```
+
+### 6.1 Retrieve
+
+Read relevant existing memory before performing work.
+
+### 6.2 Work
+
+Perform the requested task using the available project context.
+
+### 6.3 Discover
+
+Identify information discovered during the task that may remain useful in future sessions.
+
+### 6.4 Evaluate
+
+Determine whether the information is durable enough to become memory.
 
 Not every observation should be persisted.
 
-### 4.5 Record
+### 6.5 Record
 
-Durable information SHOULD be written to the project's memory files.
+Store durable information according to the project's memory rules.
 
-### 4.6 Review
+### 6.6 Review
 
-Memory changes SHOULD be reviewable through normal project tooling, preferably Git diff.
+Memory changes SHOULD remain understandable to humans.
 
-### 4.7 Commit
+When using Git, `git diff` SHOULD be sufficient to review normal memory changes.
 
-Memory MAY be committed together with the corresponding project change.
+### 6.7 Version
+
+Memory changes SHOULD be preserved through the project's version-control mechanism when available.
 
 ---
 
-## 5. What Should Become Memory?
+## 7. What Should Become Memory?
 
-Information SHOULD be considered for memory when it has future value.
+Information SHOULD be considered for storage when it has meaningful future value.
 
 Examples:
 
-### Decisions
+### Decision
 
-```text
-PostgreSQL was selected because transactional consistency
-is required by the billing workflow.
+```markdown
+PostgreSQL was selected for session storage because
+the deployment must remain self-contained.
 ```
 
-### Investigations
+### Constraint
 
-```text
-The authentication failure was caused by expired JWT
-tokens not being validated by the middleware.
-```
-
-### Constraints
-
-```text
+```markdown
 The application must remain compatible with .NET Framework 4.8.
 ```
 
-### Rejected approaches
+### Investigation
 
-```text
-Redis was considered but rejected because the deployment
-must remain fully local.
+```markdown
+The authentication failure was caused by JWT expiration
+not being validated by the middleware.
 ```
 
-### Known issues
+### Rejected approach
 
-```text
+```markdown
+Controller-level JWT validation was rejected because
+authentication rules should remain centralized.
+```
+
+### Known issue
+
+```markdown
 The CSV importer currently fails when fields contain
 embedded line breaks.
 ```
 
 ---
 
-## 6. What Should NOT Become Memory?
+## 8. What Should Not Become Memory?
 
 Agents SHOULD avoid storing:
 
 * Raw conversations
 * Temporary thoughts
 * Repeated information
-* Intermediate reasoning that has no future value
+* Intermediate reasoning with no future value
 * Large generated outputs
 * Temporary debugging output
 * Information that can easily be regenerated
 * Secrets or credentials
 
-The goal is not to maximize the amount of stored information.
+The objective is not to maximize the amount of stored information.
 
-The goal is to maximize the usefulness of retained information.
-
----
-
-## 7. Memory Structure
-
-Lean AI Memory does **not** require a fixed directory structure.
-
-A project MAY organize memory according to its own needs.
-
-For example:
-
-```text
-.ai-memory/
-├── decisions/
-├── investigations/
-├── known-issues/
-└── current.md
-```
-
-Another project may use:
-
-```text
-.ai-memory/
-├── architecture.md
-├── decisions.md
-└── known-issues.md
-```
-
-Both structures are valid.
-
-The protocol defines **memory behavior**, not a mandatory filesystem layout.
+The objective is to preserve information that remains useful.
 
 ---
 
-## 8. Memory Updates
+## 9. Memory Updates
 
-When existing knowledge becomes incorrect, obsolete, or incomplete, the agent SHOULD update the existing memory rather than blindly appending another conflicting statement.
+When existing knowledge becomes incorrect, obsolete, or incomplete, an implementation SHOULD update the existing memory according to its rules.
+
+It SHOULD avoid creating contradictory memory entries when the previous information can be updated.
 
 For example:
 
-```text
+```markdown
 Previous:
+
 Use Redis for session storage.
 
 Updated:
+
 Redis was evaluated but rejected.
 Session state is now stored in PostgreSQL.
 Reason: deployment simplicity.
 ```
 
-The Git history SHOULD preserve the evolution of the decision.
+When version control is used, the history of this change provides additional provenance.
 
 ---
 
-## 9. Provenance
+## 10. Provenance
 
-Where practical, important memory SHOULD contain enough context to explain where it came from.
+Important memory SHOULD contain enough information to understand its origin when practical.
 
-For example:
+Possible provenance includes:
 
-```markdown
-## Decision
+* Git commit
+* Date
+* Developer
+* Related file
+* Related task
+* Investigation
+* Decision
+* Issue
 
-Use PostgreSQL for session storage.
+The protocol does not require a dedicated provenance database.
 
-## Reason
-
-The deployment must remain self-contained.
-
-## Provenance
-
-- Decision made during authentication redesign
-- Commit: abc1234
-```
-
-Provenance does not require a special database.
-
-Git history MAY provide the primary provenance mechanism.
+Version control MAY serve as the primary provenance mechanism.
 
 ---
 
-## 10. Context vs Memory
+## 11. Context vs Memory
 
 Lean AI Memory distinguishes between **context** and **memory**.
 
@@ -324,44 +343,90 @@ Therefore:
 ```text
 Current Context
       ↓
-Useful discovery
+Useful Discovery
       ↓
-Durable knowledge
+Durable Knowledge
       ↓
 Project Memory
 ```
 
 An agent SHOULD NOT automatically convert all context into memory.
 
+Memory is a deliberate subset of context.
+
 ---
 
-## 11. Retrieval
+## 12. Multiple Memory Strategies
 
-Lean AI Memory does not mandate a specific retrieval mechanism.
+Different projects MAY use different memory strategies while remaining compatible with the protocol.
 
-An implementation MAY use:
+For example:
 
-* File search
-* Keyword search
-* Git
-* Agent-native search
-* Semantic search
-* Vector databases
-* Other indexing mechanisms
+### Personal Edition
 
-However, the underlying memory SHOULD remain understandable without the retrieval layer.
+A personal workflow may maintain chronological daily memory:
+
+```text
+.ai-memory/
+├── 2026-08-20.md
+├── 2026-08-21.md
+└── 2026-08-22.md
+```
+
+The agent retrieves the latest relevant history and appends new information to the current day's memory.
+
+### Team Edition
+
+A team workflow may maintain developer-specific history:
+
+```text
+.ai-memory/
+├── history_alice.md
+├── history_bob.md
+└── history_charlie.md
+```
+
+The agent identifies the current developer and retrieves the corresponding history before performing work.
+
+These are **implementation strategies**, not protocol requirements.
+
+The same Lean AI Memory principles apply to both.
+
+---
+
+## 13. Retrieval and Storage Are Independent
+
+A project may change how memory is retrieved without changing how memory is stored.
+
+For example:
+
+```text
+Markdown Memory
+      ↓
+Keyword Search
+```
+
+may later become:
+
+```text
+Markdown Memory
+      ↓
+Semantic Index
+      ↓
+Relevant Memory
+```
+
+The underlying human-readable memory remains the durable source.
 
 Retrieval is an implementation detail.
 
-Memory is the durable knowledge.
-
 ---
 
-## 12. Compatibility
+## 14. LLM and Agent Compatibility
 
-The protocol is LLM-agnostic.
+Lean AI Memory is LLM-agnostic.
 
-It MAY be implemented by:
+It MAY be used with:
 
 * Coding agents
 * CLI agents
@@ -369,125 +434,109 @@ It MAY be implemented by:
 * Autonomous agents
 * Custom LLM applications
 
-No specific model is required.
+No specific model, vendor, API, or agent framework is required.
 
-An implementation SHOULD treat the memory files and rules as the source of project-level durable knowledge.
+An implementation SHOULD adapt the rules to the capabilities of its target agent.
 
 ---
 
-## 13. Minimal Compliance
+## 15. Minimal Compliance
 
-An implementation can be considered a minimal Lean AI Memory implementation if it provides:
+A minimal Lean AI Memory implementation SHOULD provide:
 
-1. Human-readable persistent memory
-2. Project-local memory
-3. Natural-language memory rules
-4. Cross-session continuity
+1. Persistent project memory
+2. Human-readable memory
+3. Rules describing memory behavior
+4. Cross-session retrieval
 5. Human-editable memory
-6. Versioned or reviewable memory changes
-7. No mandatory memory database
+6. Reviewable memory changes
+7. A mechanism for preserving memory history
 
-Everything beyond these requirements is optional.
+The following are optional:
+
+* Vector databases
+* Semantic indexing
+* Embeddings
+* Memory ranking
+* MCP servers
+* APIs
+* Automated summarization
+* External memory services
+
+These technologies MAY improve an implementation but are not part of the core protocol.
 
 ---
 
-## 14. Example
+## 16. Non-Goals
+
+Lean AI Memory is not intended to be:
+
+* A universal memory database
+* A mandatory vector database
+* A conversation archive
+* A distributed memory service
+* A multi-tenant memory platform
+* A proprietary LLM memory implementation
+* A replacement for every existing AI memory system
+
+Projects requiring these capabilities MAY use Lean AI Memory together with additional systems.
+
+---
+
+## 17. Example Workflow
 
 A coding agent starts a new session.
 
-### Session 1
-
 ```text
-Agent
-  ↓
-Reads .ai.rules
-  ↓
-Reads relevant memory
-  ↓
-Investigates authentication bug
-  ↓
-Finds root cause
-  ↓
-Records durable finding
-  ↓
-Git diff reviewed
-  ↓
-Commit
+Read project rules
+       ↓
+Retrieve relevant memory
+       ↓
+Understand previous project state
+       ↓
+Perform requested work
+       ↓
+Discover durable knowledge
+       ↓
+Record memory according to project rules
+       ↓
+Review memory changes
+       ↓
+Commit project changes
 ```
 
-Memory:
-
-```markdown
-# Authentication Investigation
-
-## Finding
-
-JWT expiration was not validated by the authentication middleware.
-
-## Decision
-
-Expiration validation will be performed in middleware
-rather than individual controllers.
-
-## Status
-
-Implemented.
-
-## Provenance
-
-Commit: abc1234
-```
-
-### Session 2
-
-The agent starts a new session.
+The next session repeats the process:
 
 ```text
-Agent
-  ↓
-Reads rules
-  ↓
-Reads authentication memory
-  ↓
-Sees previous investigation
-  ↓
-Continues from the previous state
+New Session
+     ↓
+Retrieve previous memory
+     ↓
+Continue from durable knowledge
 ```
 
 The agent does not need the entire previous conversation.
 
-It only needs the durable knowledge that survived the session.
+It only needs the information that was intentionally preserved.
 
 ---
 
-## 15. Non-Goals
+## 18. Philosophy
 
-Lean AI Memory is not intended to be:
-
-* A replacement for vector databases
-* A universal semantic search engine
-* A distributed memory service
-* A multi-tenant memory platform
-* A conversation archive
-* A proprietary LLM memory implementation
-
-Projects requiring these capabilities may use Lean AI Memory alongside other systems.
-
----
-
-## 16. Philosophy
-
-The protocol follows a simple principle:
+Lean AI Memory follows a simple principle:
 
 > **Store what should survive the session, not everything that happened during the session.**
 
-Memory should remain:
+The protocol favors memory that is:
 
 * Small
 * Useful
+* Human-readable
 * Inspectable
 * Editable
 * Versioned
 * Reversible
 
-The simplest memory system is often the one that requires the least infrastructure to understand and maintain.
+The goal is not to build the most sophisticated memory system.
+
+The goal is to make AI memory **simple enough to understand, control, and maintain**.

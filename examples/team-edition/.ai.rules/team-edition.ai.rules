@@ -1,0 +1,189 @@
+# ==============================================================================
+
+# AI AGENT MEMORY & WORKFLOW RULES (TEAM EDITION)
+
+# ==============================================================================
+
+## SECTION 1: IDENTITY & ENVIRONMENT DETECTION
+
+1. You are an expert software engineer assistant working in a team environment.
+
+2. Before performing code changes, determine the current developer's Git
+   username from the local environment.
+
+3. If the username cannot be determined automatically, look for existing
+   files matching:
+
+   `.ai-memory/history_<username>.md`
+
+4. If the Git username still cannot be determined, ask the user:
+
+   "What is your Git username for memory logging?"
+
+5. The Git username identifies the developer's personal project memory
+   within the shared repository.
+
+## SECTION 2: MEMORY ENVIRONMENT
+
+1. All team memory is stored in the `.ai-memory/` directory at the
+   project root.
+
+2. Each developer has a dedicated memory file:
+
+   `.ai-memory/history_<git_username>.md`
+
+3. If the developer's memory file does not exist, create it when memory
+   needs to be stored.
+
+Example:
+
+```text id="9d8c2e"
+.ai-memory/
+├── history_alice.md
+├── history_bob.md
+└── history_charlie.md
+```
+
+4. Memory files are chronological and append-oriented.
+
+## SECTION 3: CONTEXT RETRIEVAL (LOOKBACK PROTOCOL)
+
+1. Before writing or modifying code, read:
+
+   `.ai-memory/history_<git_username>.md`
+
+2. If the memory file does not exist, continue without previous personal
+   memory and create it after successfully completing the task.
+
+3. Identify the most recent date header:
+
+   `## Date YYYY-MM-DD`
+
+4. Use the most recent available entries as active context.
+
+5. If the latest expected date is missing, perform a chronological
+   lookback through previous entries until relevant history is found.
+
+6. Do not load unrelated historical information unless it is required
+   for the current task.
+
+7. Use the retrieved history to avoid:
+
+   * Repeating previous investigations
+   * Reintroducing previously rejected approaches
+   * Breaking known project constraints
+   * Rewriting existing logic unnecessarily
+
+## SECTION 4: CODE EXECUTION & CONSTRAINTS
+
+1. Focus strictly on the task requested by the user.
+
+2. Do not modify unrelated files or lines.
+
+3. Do not perform global formatting or bulk refactoring unless explicitly
+   requested.
+
+4. Keep all changes clean, minimal, and targeted.
+
+5. Preserve existing project behavior unless the requested task requires
+   changing it.
+
+## SECTION 5: CONTEXT EVALUATION
+
+During the task, determine whether newly discovered information is likely
+to remain useful across future sessions.
+
+Examples include:
+
+* Important technical decisions
+* Project-specific constraints
+* Root causes of investigations
+* Important discoveries
+* Known issues
+* Rejected approaches
+* Information that future work should be aware of
+
+Do NOT store:
+
+* Raw conversations
+* Temporary thoughts
+* Intermediate reasoning
+* Large generated outputs
+* Information with no expected future value
+
+Only durable and useful knowledge should be preserved.
+
+## SECTION 6: CONTEXT STORAGE (APPEND-ONLY MEMORY LOGGING)
+
+1. After successfully completing changes, update:
+
+   `.ai-memory/history_<git_username>.md`
+
+2. Check whether today's date header already exists:
+
+   `## Date YYYY-MM-DD`
+
+   * If YES, append new logs under that header.
+   * If NO, create the new date header and append the logs.
+
+3. Use the following date format:
+
+   `## Date YYYY-MM-DD`
+
+4. Keep each memory entry concise and use a single-line bullet point.
+
+5. For code or file changes, use:
+
+   * `**File:** <exact_file_path> | **Action:** <short_summary> | **Reason:** <why_this_change_was_engineered>`
+
+6. When recording a decision, discovery, constraint, or known issue
+   that is not directly associated with a file change, use the same
+   concise format and identify the relevant context.
+
+7. Do not rewrite previous memory entries unless correcting information
+   that has become obsolete or incorrect.
+
+## SECTION 7: TEAM MEMORY BOUNDARIES
+
+1. Each developer's memory file represents that developer's working
+   history.
+
+2. Do not modify another developer's memory file unless explicitly
+   requested.
+
+3. Shared project knowledge SHOULD be recorded in a project-appropriate
+   location when the team establishes one.
+
+4. Personal working history and shared project knowledge SHOULD NOT be
+   mixed accidentally.
+
+5. Memory entries should remain understandable to other team members
+   when they are reviewed.
+
+## SECTION 8: MEMORY QUALITY
+
+1. Keep memory concise and useful.
+
+2. Prefer facts, decisions, constraints, and discoveries over narrative
+   descriptions.
+
+3. Avoid duplicating information already present in recent memory.
+
+4. If previous memory is no longer correct, record the updated state
+   clearly.
+
+5. Do not treat personal history as an authoritative source when the
+   current code or project documentation provides newer information.
+
+## SECTION 9: VERSION CONTROL & PROVENANCE
+
+1. Treat memory changes as normal project changes.
+
+2. Keep memory changes reviewable through Git diff.
+
+3. When appropriate, commit memory together with the related project
+   changes so that code changes and their development context remain
+   connected.
+
+4. Git history MAY be used to trace when and why a memory entry was
+   created or changed.

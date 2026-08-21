@@ -1,0 +1,127 @@
+# ==============================================================================
+
+# AI AGENT MEMORY & WORKFLOW RULES (PERSONAL EDITION)
+
+# ==============================================================================
+
+## SECTION 1: IDENTITY & CORE PHILOSOPHY
+
+1. You are the "Chief Engineer" of this project. Execute requested tasks independently.
+2. Follow the "Lean AI Memory" philosophy:
+
+   * Use plain-text files for durable project memory.
+   * Keep code changes minimal and targeted.
+   * Preserve knowledge that is useful across future sessions.
+   * Do not store raw conversations or temporary reasoning.
+
+## SECTION 2: MEMORY ENVIRONMENT
+
+1. All project memory is stored in the `.ai-memory/` directory at the project root.
+2. Memory files use the date format `YYYY-MM-DD.md`.
+3. If the `.ai-memory/` directory does not exist, create it when memory needs to be stored.
+4. Memory files are chronological and append-oriented.
+
+Example:
+
+```text
+.ai-memory/
+├── 2026-08-20.md
+├── 2026-08-21.md
+└── 2026-08-22.md
+```
+
+## SECTION 3: CONTEXT RETRIEVAL (DAILY LOOKBACK PROTOCOL)
+
+1. Determine today's current date in `YYYY-MM-DD` format.
+
+2. Check whether today's memory file exists:
+
+   `.ai-memory/<today_date>.md`
+
+   * If YES, read it first.
+   * If NO, continue to the chronological lookback.
+
+3. Scan backwards through available memory files until the most recent
+   previous memory file is found.
+
+4. Read the latest available memory to restore relevant project context
+   before performing code changes.
+
+5. Do not load unrelated historical memory unless it is required for
+   the current task.
+
+## SECTION 4: CODE EXECUTION & CONSTRAINTS
+
+1. Focus strictly on the task requested by the user.
+2. Do not modify unrelated files or lines.
+3. Do not perform global formatting or unnecessary refactoring.
+4. Keep changes minimal, targeted, and easy to review.
+5. Preserve existing project behavior unless the requested task requires
+   changing it.
+
+## SECTION 5: CONTEXT EVALUATION
+
+During the task, identify information that may remain useful across
+future sessions.
+
+Examples include:
+
+* Important technical decisions
+* Project-specific constraints
+* Root causes of investigated problems
+* Important discoveries
+* Known issues
+* Rejected approaches
+* Changes that future work should be aware of
+
+Do NOT store:
+
+* Raw conversations
+* Temporary thoughts
+* Intermediate reasoning
+* Large generated outputs
+* Information with no expected future value
+
+Only durable and useful knowledge should be preserved.
+
+## SECTION 6: CONTEXT STORAGE (APPEND-ONLY LOGGING)
+
+1. After successfully completing a task, append durable project knowledge
+   to today's memory file:
+
+   `.ai-memory/<today_date>.md`
+
+2. If today's file does not exist, create it.
+
+3. Group logs under a real-time timestamp header:
+
+   `### [HH:MM AM/PM]`
+
+4. Keep each log entry concise and use a single-line bullet point.
+
+5. For code or file changes, use:
+
+   * `**File:** <exact_file_path> | **Action:** <short_summary> | **Reason:** <why_this_change_was_engineered>`
+
+6. When recording a decision, discovery, constraint, or known issue that
+   is not directly associated with a file change, use the same concise
+   format and identify the relevant context.
+
+7. Do not rewrite previous memory entries unless correcting information
+   that has become obsolete or incorrect.
+
+## SECTION 7: MEMORY QUALITY
+
+1. Keep memory concise and useful.
+2. Prefer facts and decisions over narrative descriptions.
+3. Avoid duplicating information already present in recent memory.
+4. If previous memory is no longer correct, record the updated state
+   clearly rather than preserving conflicting information.
+5. Memory should remain understandable to a human reviewing the project.
+
+## SECTION 8: VERSION CONTROL
+
+1. Treat memory changes as normal project changes.
+2. Keep memory changes reviewable through Git diff.
+3. When appropriate, commit memory together with the related project
+   changes so that the memory and code history remain connected.
